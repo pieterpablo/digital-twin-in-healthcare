@@ -1,0 +1,201 @@
+{
+  "synthetic": true,
+  "measure": "SLD",
+  "unit": "mm",
+  "patients": [
+    {
+      "patient_id": "DEMO-004",
+      "name": "Daan",
+      "simulation_only": true,
+      "scans": [
+        {
+          "scan_number": 1,
+          "day": 0.0,
+          "sld_mm": 40.0,
+          "demo_plan": [
+            "operatie",
+            "chemo"
+          ],
+          "score": 2.169966081269392,
+          "progress": {
+            "direction": "baseline",
+            "message": "Eerste scan: nog geen vergelijking mogelijk."
+          }
+        },
+        {
+          "scan_number": 2,
+          "day": 42.0,
+          "sld_mm": 38.0,
+          "demo_plan": [
+            "operatie",
+            "chemo"
+          ],
+          "score": 2.1511064365524124,
+          "progress": {
+            "direction": "stable",
+            "message": "SLD ongeveer gelijk binnen de fictieve 5%-tolerantie.",
+            "change_percent": -5.0,
+            "previous_sld_mm": 40.0,
+            "current_sld_mm": 38,
+            "previous_baseline_prediction": {
+              "median": 39.110987991290926,
+              "p10": 26.796192678425882,
+              "p90": 50.52931813214784
+            },
+            "outside_prediction_interval": false,
+            "prediction_message": "Meting binnen de eerdere puntgewijze 80%-basisvoorspelling.",
+            "note": "Vergelijking zonder de nieuwe scan te fitten; zegt niet of het demo-plan uitgevoerd of effectief is."
+          }
+        },
+        {
+          "scan_number": 3,
+          "day": 84.0,
+          "sld_mm": 39.0,
+          "demo_plan": [
+            "operatie",
+            "chemo"
+          ],
+          "score": 2.1540745995562434,
+          "progress": {
+            "direction": "stable",
+            "message": "SLD ongeveer gelijk binnen de fictieve 5%-tolerantie.",
+            "change_percent": 2.6315789473684212,
+            "previous_sld_mm": 38.0,
+            "current_sld_mm": 39,
+            "previous_baseline_prediction": {
+              "median": 38.63232448801553,
+              "p10": 29.896066290925894,
+              "p90": 47.08330434464898
+            },
+            "outside_prediction_interval": false,
+            "prediction_message": "Meting binnen de eerdere puntgewijze 80%-basisvoorspelling.",
+            "note": "Vergelijking zonder de nieuwe scan te fitten; zegt niet of het demo-plan uitgevoerd of effectief is."
+          }
+        },
+        {
+          "scan_number": 4,
+          "day": 126.0,
+          "sld_mm": 42.0,
+          "demo_plan": [
+            "operatie",
+            "chemo"
+          ],
+          "score": 2.203328069971667,
+          "progress": {
+            "direction": "increasing",
+            "message": "SLD toegenomen: ongunstige meettrend in deze demo.",
+            "change_percent": 7.6923076923076925,
+            "previous_sld_mm": 39.0,
+            "current_sld_mm": 42,
+            "previous_baseline_prediction": {
+              "median": 38.709276412608226,
+              "p10": 31.600129586549354,
+              "p90": 46.56293159816506
+            },
+            "outside_prediction_interval": false,
+            "prediction_message": "Meting binnen de eerdere puntgewijze 80%-basisvoorspelling.",
+            "note": "Vergelijking zonder de nieuwe scan te fitten; zegt niet of het demo-plan uitgevoerd of effectief is."
+          }
+        }
+      ],
+      "latest_forecast": {
+        "scan_number": 4,
+        "trajectory": [
+          {
+            "day": 147.0,
+            "median": 39.9505953074502,
+            "p10": 33.33347899627905,
+            "p90": 47.267918721569
+          },
+          {
+            "day": 168.0,
+            "median": 40.01086004729176,
+            "p10": 33.222635802554414,
+            "p90": 47.95441465648932
+          },
+          {
+            "day": 189.0,
+            "median": 40.11094880072657,
+            "p10": 33.0108901290449,
+            "p90": 48.83907326011452
+          }
+        ],
+        "demo_plan": [
+          "operatie",
+          "chemo"
+        ],
+        "score": 2.203328069971667,
+        "components": {
+          "tumor": 1.540828069971667,
+          "toxicity": 0.6625000000000001,
+          "rules": 0
+        },
+        "treatment_trajectory": [
+          {
+            "day": 147.0,
+            "action": "operatie",
+            "sld_mm": 21.972827419097612,
+            "toxicity": 0.25
+          },
+          {
+            "day": 168.0,
+            "action": "chemo",
+            "sld_mm": 19.805375723409423,
+            "toxicity": 0.275
+          },
+          {
+            "day": 189.0,
+            "action": "rust",
+            "sld_mm": 19.85491965635965,
+            "toxicity": 0.1375
+          }
+        ],
+        "candidates": [
+          {
+            "plan": [
+              "operatie",
+              "chemo"
+            ],
+            "status": "allowed",
+            "score": 2.203328069971667,
+            "reasons": []
+          },
+          {
+            "plan": [
+              "chemo"
+            ],
+            "status": "excluded",
+            "score": 3.964129093498042,
+            "reasons": [
+              "Roker: operatie dan chemo; niet-roker: chemo eerst (fictieve regel, prioriteit 1)."
+            ]
+          },
+          {
+            "plan": [
+              "chemo",
+              "operatie"
+            ],
+            "status": "excluded",
+            "score": 5.527895778911857,
+            "reasons": [
+              "Voldoet niet aan de fictieve geslachtsregel (prioriteit 2).",
+              "Roker: operatie dan chemo; niet-roker: chemo eerst (fictieve regel, prioriteit 1)."
+            ]
+          },
+          {
+            "plan": [
+              "operatie"
+            ],
+            "status": "excluded",
+            "score": 5.088495557137692,
+            "reasons": [
+              "Voldoet niet aan de fictieve geslachtsregel (prioriteit 2).",
+              "Roker: operatie dan chemo; niet-roker: chemo eerst (fictieve regel, prioriteit 1)."
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "run_history": []
+}
