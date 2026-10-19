@@ -1,0 +1,62 @@
+{
+  "synthetic": true,
+  "description": "Volledig fictieve personen en waarden voor softwaretests; geen klinische dataset of behandeladvies.",
+  "patients": [
+    {
+      "id": "DEMO-001",
+      "name": "Noor",
+      "variables": {
+        "age_years": 68, "sex": "female", "smoking": "former",
+        "performance_status": 1, "tumor_stage": "IV", "histology": "NSCLC adenocarcinoma",
+        "EGFR": "negative", "PD_L1_percent": 20, "hemoglobin_mmol_l": 7.8
+      },
+      "ct_scans": [
+        {"day": 0, "sld_mm": 16}, {"day": 42, "sld_mm": 14},
+        {"day": 84, "sld_mm": 19}, {"day": 132, "sld_mm": 20}
+      ],
+      "treatment_history": [{"start_day": 0, "end_day": 84, "label": "Fictief schema A"}]
+    },
+    {
+      "id": "DEMO-002",
+      "name": "Milan",
+      "variables": {
+        "age_years": 55, "sex": "male", "smoking": "never",
+        "performance_status": 0, "tumor_stage": "IV", "histology": "NSCLC adenocarcinoma",
+        "EGFR": "positive", "PD_L1_percent": 5, "hemoglobin_mmol_l": 8.5
+      },
+      "ct_scans": [
+        {"day": 0, "sld_mm": 60}, {"day": 42, "sld_mm": 48},
+        {"day": 84, "sld_mm": 41}, {"day": 126, "sld_mm": 39}
+      ],
+      "treatment_history": [{"start_day": 0, "end_day": 84, "label": "Fictief schema B"}]
+    },
+    {
+      "id": "DEMO-003",
+      "name": "Sara",
+      "variables": {
+        "age_years": 76, "sex": "female", "smoking": "current",
+        "performance_status": 2, "tumor_stage": "III", "histology": "NSCLC squamous",
+        "EGFR": "unknown", "PD_L1_percent": 60, "hemoglobin_mmol_l": 6.9
+      },
+      "ct_scans": [
+        {"day": 100, "sld_mm": 35}, {"day": 142, "sld_mm": 36},
+        {"day": 184, "sld_mm": 40}, {"day": 226, "sld_mm": 47}
+      ],
+      "treatment_history": [{"start_day": 100, "end_day": 184, "label": "Fictief schema C"}]
+    },
+    {
+      "id": "DEMO-004",
+      "name": "Daan",
+      "variables": {
+        "age_years": 62, "sex": "male", "smoking": "current",
+        "performance_status": 1, "tumor_stage": "III", "histology": "NSCLC squamous",
+        "EGFR": "negative", "PD_L1_percent": 10, "hemoglobin_mmol_l": 8.0
+      },
+      "ct_scans": [
+        {"day": 0, "sld_mm": 40}, {"day": 42, "sld_mm": 38},
+        {"day": 84, "sld_mm": 39}, {"day": 126, "sld_mm": 42}
+      ],
+      "treatment_history": [{"start_day": 0, "end_day": 84, "label": "Fictief schema D"}]
+    }
+  ]
+}
