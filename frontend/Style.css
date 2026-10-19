@@ -1,0 +1,99 @@
+/* Algemene opmaak voor de hele pagina */
+body {
+  font-family: verdana, sans-serif;
+  background-color: #e9e9e9;
+  color: #222222;
+  max-width: 1000px;   /* niet breder dan 1000px */
+  margin: 0 auto;      /* auto = pagina in het midden */
+  padding: 20px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+/* Elk onderdeel (grafiek, plan, gegevens) is een wit vak */
+section {
+  background-color: white;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+h2 {
+  font-size: 18px;
+  margin-top: 0;
+}
+
+/* De grafiek heeft een vaste hoogte nodig, anders wordt hij te groot */
+.grafiek-box {
+  position: relative;
+  height: 350px;
+}
+
+/* Het behandelplan */
+#plan li {
+  margin-bottom: 12px;
+}
+
+.weken {
+  color: #666666;
+  font-size: 14px;
+}
+
+.reden {
+  display: block;   /* zet de reden op een nieuwe regel */
+  color: #444444;
+}
+
+/* De tabel met patiëntgegevens */
+table {
+  width: 100%;
+  border-collapse: collapse;   /* geen dubbele lijnen */
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.let-op {
+  color: #777777;
+  font-size: 13px;
+  margin-top: 16px;
+}
+
+.sidenav {
+  height: 100%; 
+  width: 220px; 
+  position: fixed; 
+  z-index: 1; 
+  top: 0; 
+  left: 0;
+  background-color: #afaeae; 
+  overflow-x: hidden; 
+  padding-top: 20px;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #222222;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #000000;
+}
+
+/* Style page content */
+.main {
+  margin-left: 160px; /* Same as the width of the sidebar */
+  padding: 0px 10px;
+}

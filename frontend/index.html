@@ -1,14 +1,63 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BMI Example</title>
-    <link rel="stylesheet" href="./src/style.css" />
-    <script type="module" src="/src/main.ts"></script>
-  </head>
-  <body>
-    <home-page></home-page>
-  </body>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Behandeloverzicht longkanker</title>
+  
+
+  <!-- De opmaak staat in een apart bestand -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js is een bibliotheek waarmee een lijngrafiek kan worden getekend, internet is nodig. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="sidenav">
+  <a href="#">Patiënt</a>
+  <a href="#">Behandeloverzicht</a>
+  <a href="#">Bloedwaarden</a>
+  <a href="#">Scans</a>
+  <a href="#">Metingen</a>
+  <a href="#">Eerdere bezoeken</a>
+  <a href="#">Eerdere diagnoses</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  <a href="#">Etc</a>
+  </div>
+
+  <p class="crumb">Patiëntportaal <span>/</span> Behandeloverzicht</p>
+  <h1>Overzicht voor longkankerbehandeling (voorbeeld)</h1>
+  <!-- Script.js bevat de data nodig om deze regel te vullen en wordt hieronder opgeroepen -->
+  <p id="patientinfo"></p>
+
+  <!-- Deel 1: de lijngrafiek met de verwachte tumorgrootte -->
+  <section>
+    <h2>Verwachte tumorgrootte</h2>
+    <!-- Chart.js tekent in een canvas. De div eromheen bepaalt de hoogte -->
+    <div class="grafiek-box">
+      <canvas id="grafiek"></canvas>
+    </div>
+  </section>
+
+  <!-- Deel 2: het behandelplan in volgorde (een genummerde lijst) -->
+  <section>
+    <h2>Aanbevolen Behandelplan</h2>
+    <ol id="plan"></ol>
+  </section>
+
+  <!-- Deel 3: de patiëntgegevens waarop het plan is gebaseerd -->
+  <section>
+    <h2>Gebruikte patiëntgegevens</h2>
+    <table id="gegevens"></table>
+  </section>
+
+  <!-- Het script staat onderaan, zodat de elementen hierboven al bestaan als het draait -->
+  <script src="script.js"></script>
+</body>
 </html>
