@@ -5,7 +5,7 @@ body {
   color: #222222;
   max-width: 1000px;   /* niet breder dan 1000px */
   margin: 0 auto;      /* auto = pagina in het midden */
-  padding: 20px;
+  padding: 20px 20px 20px 240px;   /* links 240px vrij voor de zijbalk (die is 220px breed) */
 }
 
 h1 {
@@ -96,4 +96,52 @@ th, td {
 .main {
   margin-left: 160px; /* Same as the width of the sidebar */
   padding: 0px 10px;
+}
+
+/* Zoekbalk */
+.zoek {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.zoek label {
+  font-weight: bold;
+}
+
+.zoek input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+  padding: 8px 10px;
+  font-size: 15px;
+  border: 1px solid #bbbbbb;
+  border-radius: 6px;
+}
+
+.zoek button {
+  padding: 8px 18px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 6px;
+  background-color: #1f5fbf;
+  color: white;
+  cursor: pointer;
+}
+
+.zoek button:hover {
+  background-color: #174a96;
+}
+
+/* Melding onder de zoekbalk (niets gevonden, geen verbinding, enz.) */
+.zoekmelding {
+  min-height: 1.4em;
+  margin: 8px 0 0;
+  color: #555555;
+}
+
+.zoekmelding.fout {
+  color: #b3261e;
 }

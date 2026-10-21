@@ -13,9 +13,10 @@ async function loadPatient(patientId) {
   return await response.json();
 }
 
-async function start() {
+// Laat de gegevens van één patiënt op de pagina zien.
+async function toonPatient(patientId) {
   try {
-    const data = await loadPatient("DEMO-001");
+    const data = await loadPatient(patientId);
 
     const forecast = data.latest_forecast;
 
@@ -100,6 +101,9 @@ async function start() {
       patientInfo.textContent =
         `${data.name} - stadium ${data.variables.tumor_stage}`;
     }
+
+    // Maak het resultaat zichtbaar (Chart.js heeft een zichtbaar vak nodig om te tekenen).
+    document.getElementById("resultaat").hidden = false;
 
     // Bestaande grafiek vervangen indien nodig.
     const canvas = document.getElementById("grafiek");
@@ -268,9 +272,117 @@ async function start() {
 
   } catch (error) {
     console.error("Digital Twin error:", error);
-    alert(
-      "Kon de Digital Twin niet laden: " +
-      error.message
+    zetMelding(
+      "Kon de Digital Twin niet laden: " + error.message,
+      true
+    );
+  }
+}
+
+
+// ============================================================
+// ZOEKEN OP NAAM
+// ============================================================
+
+// Hier onthouden we de lijst met patiënten: [{ id: "DEMO-001", name: "Noor" }, ...]
+let patienten = [];
+
+// Tekst onder de zoekbalk. fout = true maakt de tekst rood.
+function zetMelding(tekst, fout = false) {
+  const melding = document.getElementById("zoekmelding");
+  melding.textContent = tekst;
+  melding.classList.toggle("fout", fout);
+}
+
+// Haal de lijst met patiënten op bij de backend en vul de suggesties in de zoekbalk.
+async function laadPatientenlijst() {
+  const response = await fetch(`${API}/patients`);
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status}`);
+  }
+
+  patienten = await response.json();
+
+  const suggesties = document.getElementById("patientnamen");
+  suggesties.replaceChildren();
+
+  for (const patient of patienten) {
+    const optie = document.createElement("option");
+    optie.value = patient.name;
+    optie.label = patient.id;
+    suggesties.appendChild(optie);
+  }
+}
+
+// Zoek in de lijst: eerst een precieze naam (of ID), anders een deel van de naam.
+// Geeft { patient } als er precies één gevonden is, anders { melding }.
+function zoekPatient(invoer) {
+  const zoekterm = invoer.trim().toLowerCase();
+
+  if (zoekterm === "") {
+    return { melding: "Vul een naam in om het behandeloverzicht te zien." };
+  }
+
+  const precies = patienten.filter(p =>
+    p.name.toLowerCase() === zoekterm ||
+    p.id.toLowerCase() === zoekterm
+  );
+  if (precies.length === 1) {
+    return { patient: precies[0] };
+  }
+
+  const gevonden = precies.length > 1 ? precies : patienten.filter(p =>
+    p.name.toLowerCase().includes(zoekterm) ||
+    p.id.toLowerCase().includes(zoekterm)
+  );
+
+  if (gevonden.length === 1) {
+    return { patient: gevonden[0] };
+  }
+
+  if (gevonden.length === 0) {
+    return { melding: `Geen patiënt gevonden met "${invoer.trim()}".` };
+  }
+
+  const namen = gevonden.map(p => `${p.name} (${p.id})`).join(", ");
+  return { melding: `Meerdere patiënten gevonden: ${namen}. Typ de volledige naam of het ID.` };
+}
+
+// Wat er gebeurt als je op "Zoek" klikt of Enter drukt.
+async function zoekEnToon(event) {
+  event.preventDefault();
+
+  const resultaat = zoekPatient(document.getElementById("zoekveld").value);
+
+  if (!resultaat.patient) {
+    // Niets (of meerdere) gevonden: verberg de vorige patiënt, zodat je niet de verkeerde gegevens ziet.
+    document.getElementById("resultaat").hidden = true;
+    document.getElementById("patientinfo").textContent = "";
+    zetMelding(resultaat.melding, true);
+    return;
+  }
+
+  zetMelding(`Gegevens van ${resultaat.patient.name} (${resultaat.patient.id}) worden geladen...`);
+  await toonPatient(resultaat.patient.id);
+
+  // Als het laden gelukt is, staat er geen foutmelding. Dan tonen we de naam netjes.
+  if (!document.getElementById("zoekmelding").classList.contains("fout")) {
+    zetMelding(`Je bekijkt: ${resultaat.patient.name} (${resultaat.patient.id})`);
+  }
+}
+
+async function start() {
+  document.getElementById("zoekformulier")
+    .addEventListener("submit", zoekEnToon);
+
+  try {
+    await laadPatientenlijst();
+  } catch (error) {
+    console.error("Patiëntenlijst laden mislukt:", error);
+    zetMelding(
+      "Geen verbinding met de backend. Draait 'pixi run backend'? (" + error.message + ")",
+      true
     );
   }
 }

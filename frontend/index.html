@@ -7,7 +7,7 @@
   
 
   <!-- De opmaak staat in een apart bestand -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="Style.css">
 
   <!-- Chart.js is een bibliotheek waarmee een lijngrafiek kan worden getekend, internet is nodig. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -33,8 +33,22 @@
 
   <p class="crumb">Patiëntportaal <span>/</span> Behandeloverzicht</p>
   <h1>Overzicht voor longkankerbehandeling (voorbeeld)</h1>
+
+  <!-- Zoeken op naam. Script.js haalt de patiëntenlijst op en vult de suggesties in. -->
+  <form id="zoekformulier" class="zoek">
+    <label for="zoekveld">Patiënt zoeken</label>
+    <input id="zoekveld" type="search" list="patientnamen" placeholder="Typ een naam, bijvoorbeeld Noor" autocomplete="off">
+    <datalist id="patientnamen"></datalist>
+    <button type="submit">Zoek</button>
+  </form>
+  <!-- Hier komt een melding als er niets gevonden is -->
+  <p id="zoekmelding" class="zoekmelding" role="status">Vul een naam in om het behandeloverzicht te zien.</p>
+
   <!-- Script.js bevat de data nodig om deze regel te vullen en wordt hieronder opgeroepen -->
   <p id="patientinfo"></p>
+
+  <!-- Alles hieronder blijft verborgen tot er een patiënt is gevonden -->
+  <div id="resultaat" hidden>
 
   <!-- Deel 1: de lijngrafiek met de verwachte tumorgrootte -->
   <section>
@@ -57,7 +71,9 @@
     <table id="gegevens"></table>
   </section>
 
+  </div>
+
   <!-- Het script staat onderaan, zodat de elementen hierboven al bestaan als het draait -->
-  <script src="script.js"></script>
+  <script src="Script.js"></script>
 </body>
 </html>
