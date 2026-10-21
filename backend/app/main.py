@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .api.tumor import router as tumor_router
 
 from .api.bmi import router as bmi_router
 
@@ -22,8 +23,10 @@ app.add_middleware(
 
 # Register API endpoints
 app.include_router(bmi_router, prefix="/api")
+app.include_router(tumor_router, prefix="/api")
 
 
 @app.get("/")
 def root():
     return {"message": "BMI API is running"}
+
