@@ -13,33 +13,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
-  <div class="sidenav">
-  <a href="#">Patiënt</a>
-  <a href="#">Behandeloverzicht</a>
-  <a href="#">Bloedwaarden</a>
-  <a href="#">Scans</a>
-  <a href="#">Metingen</a>
-  <a href="#">Eerdere bezoeken</a>
-  <a href="#">Eerdere diagnoses</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  <a href="#">Etc</a>
-  </div>
 
-  <p class="crumb">Patiëntportaal <span>/</span> Behandeloverzicht</p>
-  <h1>Overzicht voor longkankerbehandeling (voorbeeld)</h1>
+  <div class="sidenav" id="sidenav">
+    <a href="#" id="patientZoeken">Patiënt zoeken</a>
+  </div>
+  <div class="titlebar" id="titlebar">
+    <h1>Overzicht voor longkankerbehandeling (voorbeeld)</h1>
+  </div>
 
   <!-- Zoeken op naam. Script.js haalt de patiëntenlijst op en vult de suggesties in. -->
   <form id="zoekformulier" class="zoek">
     <label for="zoekveld">Patiënt zoeken</label>
-    <input id="zoekveld" type="search" list="patientnamen" placeholder="Typ een naam, bijvoorbeeld Noor" autocomplete="off">
-    <datalist id="patientnamen"></datalist>
-    <button type="submit">Zoek</button>
+    <div class="zoekbalk-wrapper">
+      <input id="zoekveld" type="search" placeholder="Naam" autocomplete="off">
+      <ul id="patientnamen" class="zoek-opties"></ul>
+    </div>
   </form>
   <!-- Hier komt een melding als er niets gevonden is -->
   <p id="zoekmelding" class="zoekmelding" role="status">Vul een naam in om het behandeloverzicht te zien.</p>

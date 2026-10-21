@@ -11,6 +11,7 @@ body {
 h1 {
   font-size: 28px;
   margin-bottom: 4px;
+  color: #174a96;
 }
 
 /* Elk onderdeel (grafiek, plan, gegevens) is een wit vak */
@@ -133,6 +134,50 @@ th, td {
 
 .zoek button:hover {
   background-color: #174a96;
+}
+
+.zoekbalk-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+}
+
+/* Zorg dat de input de volle breedte van de wrapper pakt */
+.zoekbalk-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 2. De opmaak en positie van jouw eigen dropdown-lijst */
+.zoek-opties {
+  position: absolute;
+  top: 100%; /* Plakt de lijst exact onder de zoekbalk */
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #bbbbbb;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;  /* Maakt een scrollbar als de lijst te lang wordt */
+  z-index: 1000;     /* Zorgt dat de lijst boven andere elementen zweeft i.p.v. eronder verdwijnt */
+  display: none;     /* Standaard onzichtbaar totdat je typt */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Stijl voor de losse opties in de lijst */
+.zoek-opties li {
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.zoek-opties li:hover {
+  background-color: #f0f4f8;
 }
 
 /* Melding onder de zoekbalk (niets gevonden, geen verbinding, enz.) */
