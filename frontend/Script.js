@@ -1,9 +1,11 @@
+const API = "/api/tumor";
+let loadVersion = 0;
+let currentPatient = null;
+let currentData = null;
 
-const API = "http://localhost:8000/api/tumor";
-
-async function loadPatient(patientId) {
+async function loadPatient(patientId, scanNumber = null) {
   const response = await fetch(
-    `${API}/predict/${encodeURIComponent(patientId)}`
+    `${API}/predict/${encodeURIComponent(patientId)}${scanNumber === null ? "" : "?scan=" + scanNumber}`
   );
 
   if (!response.ok) {
@@ -13,10 +15,15 @@ async function loadPatient(patientId) {
   return await response.json();
 }
 
-// Laat de gegevens van één patiënt op de pagina zien.
-async function toonPatient(patientId) {
+// Laat de gegevens van één patiënt op de pagina zien
+async function toonPatient(patientId, scanNumber = null) {
+  const version = ++loadVersion;
+  document.getElementById("resultaat").hidden = true;
+  document.getElementById("save").disabled = true;
+  currentPatient = null;
   try {
-    const data = await loadPatient(patientId);
+    const data = await loadPatient(patientId, scanNumber);
+    if (version !== loadVersion) return false;
 
     const forecast = data.latest_forecast;
 
@@ -55,44 +62,6 @@ async function toonPatient(patientId) {
 
     const toWeek = day => (day - firstDay) / 7;
 
-    // LIJN 1: gemeten tumorverloop.
-    // Deze lijn stopt bij de laatste CT-scan.
-    const measuredPoints = measurements.map(
-      ([day, sld]) => ({
-        x: toWeek(day),
-        y: sld
-      })
-    );
-
-    // LIJN 2: adaptieve fictieve MPC-simulatie.
-    // Deze begint bij de eerste CT-scan en
-    // wordt na iedere CT opnieuw geoptimaliseerd.
-    const rawSimulation = Array.isArray(
-      forecast.full_treatment_trajectory
-    )
-      ? forecast.full_treatment_trajectory
-      : [];
-
-    const simulatedPoints = rawSimulation
-      .map(point => ({
-        x: toWeek(Number(point.day)),
-        y: Number(point.sld_mm)
-      }))
-      .filter(point =>
-        Number.isFinite(point.x) &&
-        Number.isFinite(point.y)
-      )
-      .sort((a, b) => a.x - b.x);
-
-    // Controleer of de backend de MPC-curve levert.
-    if (simulatedPoints.length === 0) {
-      throw new Error(
-        "De backend levert nog geen " +
-        "full_treatment_trajectory. " +
-        "Controleer MPC.py en tumor.py."
-      );
-    }
-
     // Patiëntinformatie.
     const patientInfo =
       document.getElementById("patientinfo");
@@ -105,123 +74,17 @@ async function toonPatient(patientId) {
     // Maak het resultaat zichtbaar (Chart.js heeft een zichtbaar vak nodig om te tekenen).
     document.getElementById("resultaat").hidden = false;
 
-    // Bestaande grafiek vervangen indien nodig.
-    const canvas = document.getElementById("grafiek");
-
-    if (!canvas) {
-      throw new Error("Grafiekelement niet gevonden");
-    }
-
-    const oldChart = Chart.getChart(canvas);
-
-    if (oldChart) {
-      oldChart.destroy();
-    }
-
-    // Precies twee lijnen.
-    new Chart(canvas, {
-      type: "line",
-
-      data: {
-        datasets: [
-          {
-            label: "Gemeten tumorverloop (CT-scans)",
-            data: measuredPoints,
-
-            borderColor: "#222222",
-            backgroundColor: "#222222",
-
-            borderWidth: 3,
-            pointRadius: 5,
-            pointHoverRadius: 7,
-
-            showLine: true,
-            tension: 0,
-
-            spanGaps: false
-          },
-          {
-            label: "Voorspeld tumorverloop met MPC-behandeling",
-            data: simulatedPoints,
-
-            borderColor: "#16a34a",
-            backgroundColor: "#16a34a",
-
-            borderWidth: 3,
-            pointRadius: 0,
-            pointHoverRadius: 5,
-
-            showLine: true,
-            tension: 0,
-
-            spanGaps: false
-          }
-        ]
+   
+    drawChart({
+      scans: measurements.map(([day, sld]) => ({day, sld_mm: sld})),
+      latest_forecast: {
+        trajectory: forecast.trajectory,
+        treatment_trajectory: optimization.trajectory || []
       },
-
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        parsing: false,
-
-        interaction: {
-          mode: "nearest",
-          intersect: false
-        },
-
-        scales: {
-          x: {
-            type: "linear",
-            min: 0,
-
-            title: {
-              display: true,
-              text: "Tijd (weken)"
-            }
-          },
-
-          y: {
-            min: 0,
-
-            title: {
-              display: true,
-              text: "Tumorgrootte SLD (mm)"
-            }
-          }
-        },
-
-        plugins: {
-          legend: {
-            display: true,
-            position: "top"
-          },
-
-          tooltip: {
-            callbacks: {
-              title: items => {
-                if (!items.length) return "";
-
-                return (
-                  "Week " +
-                  Number(items[0].parsed.x).toFixed(1)
-                );
-              },
-
-              label: context => {
-                return (
-                  context.dataset.label +
-                  ": " +
-                  Number(context.parsed.y).toFixed(1) +
-                  " mm"
-                );
-              }
-            }
-          }
-        }
-      }
+      previous_forecasts: history
     });
 
-    // Toon het actuele fictieve behandelplan.
+    // Toon het actuele fictieve behandelplan
     const planElement = document.getElementById("plan");
 
     if (planElement) {
@@ -236,7 +99,7 @@ async function toonPatient(patientId) {
       }
     }
 
-    // Patiëntgegevens.
+    // Patiëntgegevens
     const table = document.getElementById("gegevens");
 
     if (table) {
@@ -265,21 +128,36 @@ async function toonPatient(patientId) {
       }
     }
 
+    currentPatient = patientId;
+    currentData = data;
+    document.dispatchEvent(new CustomEvent("patient-loaded", {detail: data}));
     console.log("Digital Twin geladen:", data);
     console.log("Laatste CT-dag:", lastDay);
-    console.log("CT-metingen:", measuredPoints);
-    console.log("Adaptieve MPC-curve:", simulatedPoints);
+    console.log("CT-metingen:", measurements);
+
+    return true;
 
   } catch (error) {
+    if (version !== loadVersion) return false;
+    document.getElementById("resultaat").hidden = true;
+    document.getElementById("patientinfo").textContent = "";
+    currentPatient = null;
+    currentData = null;
     console.error("Digital Twin error:", error);
     zetMelding(
       "Kon de Digital Twin niet laden: " + error.message,
       true
     );
+    updateSidenav(false);
+    return false;
   }
 }
 
 function resetPatientPagina() {
+  loadVersion++;
+  currentPatient = null;
+  currentData = null;
+  updateSidenav(false);
   // Verberg de patiëntresultaten
   document.getElementById("resultaat").hidden = true;
 
@@ -290,13 +168,13 @@ function resetPatientPagina() {
   document.getElementById("zoekveld").value = "";
 
   // Herstel de beginmelding
-  zetMelding("Vul een naam in om het behandeloverzicht te zien.");
+  zetMelding("");
 
   // Zet de cursor terug in de zoekbalk
   document.getElementById("zoekveld").focus();
 }
 
-// Dit laadt de sidemenu als je een patient hebt gezocht.
+// Dit laadt de sidemenu als je een patient hebt gezocht
 function updateSidenav(patientSelected) {
   const sidenav = document.getElementById("sidenav");
   sidenav.replaceChildren();
@@ -313,6 +191,7 @@ function updateSidenav(patientSelected) {
     { label: "Endoscopie", page: "" },
     { label: "Kuurinformatie", page: "" },
     { label: "Laboratorium", page: "" },
+    { label: "Etc", page: "" },
       ]
   : [
     {label: "Patiënt zoeken", page: "search"}
@@ -330,23 +209,23 @@ function updateSidenav(patientSelected) {
 }
 
 
-// Hier onthouden we de lijst met patiënten: [{ id: "DEMO-001", name: "Noor" }, ...]
+// Hier onthouden we de lijst met patiënten
 let patienten = [];
 
-// Tekst onder de zoekbalk. fout = true maakt de tekst rood.
+// Tekst onder de zoekbalk. fout = true maakt de tekst rood
 function zetMelding(tekst, fout = false) {
   const melding = document.getElementById("zoekmelding");
   melding.textContent = tekst;
   melding.classList.toggle("fout", fout);
 }
 
-// Zoek in de lijst: eerst een precieze naam (of ID), anders een deel van de naam.
-// Geeft { patient } als er precies één gevonden is, anders { melding }.
+// Zoek in de lijst: eerst een precieze naam (of ID), anders een deel van de naam
+// Geeft { patient } als er precies één gevonden is, anders de { melding }
 function zoekPatient(invoer) {
   const zoekterm = invoer.trim().toLowerCase();
 
   if (zoekterm === "") {
-    return { melding: "Vul een naam in om het behandeloverzicht te zien." };
+    return { melding: "" };
   }
 
   const precies = patienten.filter(p =>
@@ -402,7 +281,7 @@ async function laadPatientenlijst() {
   }
 }
 
-// 3. Zorgt ervoor dat de dropdown opent en filtert tijdens het TYPEN
+// Zorgt ervoor dat de dropdown opent en filtert tijdens het TYPEN
 const zoekveld = document.getElementById("zoekveld");
 const suggestiesLijst = document.getElementById("patientnamen");
 
@@ -431,7 +310,7 @@ zoekveld.addEventListener("input", (e) => {
   suggestiesLijst.style.display = aantalZichtbaar > 0 ? "block" : "none";
 });
 
-// 4. Sluit de lijst als je ergens anders op de pagina klikt
+// Sluit de lijst als je ergens anders op de pagina klikt
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".zoekbalk-wrapper")) {
     suggestiesLijst.style.display = "none";
@@ -446,6 +325,9 @@ async function zoekEnToon(event) {
   const resultaat = zoekPatient(document.getElementById("zoekveld").value);
 
   if (!resultaat.patient) {
+    loadVersion++;
+    currentPatient = null;
+    currentData = null;
     // Niets (of meerdere) gevonden: verberg de vorige patiënt, zodat je niet de verkeerde gegevens ziet.
     document.getElementById("resultaat").hidden = true;
     document.getElementById("patientinfo").textContent = "";
@@ -455,11 +337,12 @@ async function zoekEnToon(event) {
   }
 
   zetMelding(`Gegevens van ${resultaat.patient.name} (${resultaat.patient.id}) worden geladen...`);
-  await toonPatient(resultaat.patient.id);
+  const geladen = await toonPatient(resultaat.patient.id);
+  if (!geladen) return;
 
   // Als het laden gelukt is, staat er geen foutmelding. Dan tonen we de naam.
   if (!document.getElementById("zoekmelding").classList.contains("fout")) {
-    zetMelding(`Je bekijkt: ${resultaat.patient.name} (${resultaat.patient.id})`);
+    zetMelding("");
   }
   updateSidenav(true);
 }
@@ -468,8 +351,9 @@ async function start() {
   document.getElementById("zoekformulier")
     .addEventListener("submit", zoekEnToon);
   
-  document.getElementById("patientZoeken")
-    .addEventListener("click", function(event) {
+  // Delegatie: het menu wordt na patiëntselectie opnieuw opgebouwd.
+  document.getElementById("sidenav").addEventListener("click", function(event) {
+    if (event.target.closest("a")?.textContent !== "Patiënt zoeken") return;
     event.preventDefault();
     resetPatientPagina();
   });
@@ -478,6 +362,7 @@ async function start() {
     await laadPatientenlijst();
   } catch (error) {
     console.error("Patiëntenlijst laden mislukt:", error);
+    zetMelding("Patiëntenlijst laden mislukt: " + error.message, true);
   }
 }
 

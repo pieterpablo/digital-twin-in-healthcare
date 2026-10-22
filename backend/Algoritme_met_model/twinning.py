@@ -39,43 +39,6 @@ def predict(scan_days, scan_sld, t_future, n_samples=20_000, seed=0):
             "samples": draws}
 
 
-def historical_fit(scan_days, scan_sld, days, n_samples=20_000, seed=0):
-    """Posterior fit to all supplied scans, without future data or observation noise.
-
-    This is an in-sample retrospective fit, NOT a historical forecast.
-    """
-    rng = np.random.default_rng(seed)
-    scan_days = np.asarray(scan_days, dtype=float)
-    scan_sld = np.asarray(scan_sld, dtype=float)
-    days = np.asarray(days, dtype=float)
-    if len(scan_days) == 0 or len(scan_days) != len(scan_sld):
-        raise ValueError("Provide matching nonempty scan days and SLD values")
-    if np.any(days < 0) or np.any(~np.isfinite(days)):
-        raise ValueError("Evaluation days must be finite and nonnegative")
-    log_ks = rng.normal(-3.0, 0.8, n_samples)
-    log_kg = rng.normal(-3.2, 0.8, n_samples)
-    ks, kg = 10 ** log_ks, 10 ** log_kg
-    s0 = scan_sld[0]
-    model = biexp(scan_days[:, None], s0, ks[None, :], kg[None, :])
-    sigma = np.sqrt(2.0 ** 2 + (0.10 * model) ** 2)
-    loglik = (-0.5 * ((model - scan_sld[:, None]) / sigma) ** 2 - np.log(sigma)).sum(axis=0)
-    weights = np.exp(loglik - np.max(loglik))
-    weights /= weights.sum()
-
-    def weighted_quantiles(values):
-        order = np.argsort(values)
-        sorted_values = values[order]
-        cdf = np.cumsum(weights[order])
-        return [float(np.interp(q, cdf, sorted_values)) for q in (0.1, 0.5, 0.9)]
-
-    curve = []
-    for day in days:
-        values = biexp(float(day), s0, ks, kg)
-        low, median, high = weighted_quantiles(values)
-        curve.append({"day": float(day), "median": median, "p10": low, "p90": high})
-    return curve
-
-
 if __name__ == "__main__":
     scan_days = [  0,  48,  85, 132]        
     scan_sld  = [ 16,  16,  17,  20]        

@@ -21,7 +21,7 @@ def demo_treatment_plan(variables, synthetic=False):
         result['note'] = 'Geslacht of rookstatus ontbreekt/is onbekend; geen demo-plan.'
         return result
 
-   #voor de demo is former roker geen roker asjeblieft sofia
+   #voor de demo is former roker geen roker
     is_smoker = smoking == 'current'
     candidates = [['chemo'], ['chemo', 'operatie'], ['operatie', 'chemo'], ['operatie']]
     if sex == 'female':

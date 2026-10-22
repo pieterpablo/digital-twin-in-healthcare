@@ -1,6 +1,6 @@
 {
   "synthetic": true,
-  "description": "Volledig fictieve personen en waarden voor softwaretests; geen klinische dataset of behandeladvies.",
+  "description": "Volledig fictieve personen en waarden voor progamma testen, geen echte dataset of behandeladvies",
   "patients": [
     {
       "id": "DEMO-001",

@@ -190,3 +190,20 @@ th, td {
 .zoekmelding.fout {
   color: #b3261e;
 }
+
+/* Aanvulling voor bestaande scankeuze en opslag. */
+[hidden] { display: none !important; }
+#grafiek { width: 100%; height: 100%; font: 13px verdana, sans-serif; }
+#legend { font-size: 12px; line-height: 1.7; }
+h1 { overflow-wrap: anywhere; }
+select, button { padding: 8px 12px; font: inherit; margin: 5px; }
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: wait; }
+.table-scroll { overflow-x: auto; }
+.let-op { line-height: 1.5; }
+@media (max-width: 700px) {
+  body { padding: 12px; }
+  .sidenav { position: static; width: auto; height: auto; padding: 4px; }
+  .sidenav a { display: inline-block; font-size: 15px; }
+  h1 { font-size: 23px; }
+}

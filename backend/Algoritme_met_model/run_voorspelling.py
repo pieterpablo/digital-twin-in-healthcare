@@ -48,7 +48,7 @@ def compact_patient(patient):
                                 'candidates': candidates}}
 
 
-def save_predictions(output_path, output):
+def save_predictions(output_path, output, clear_old=None):
     """Bewaar uitsluitend uitvoer van één patiënt in diens eigen bestand."""
     patient = output['patients'][0]
     old_output = None
@@ -58,7 +58,10 @@ def save_predictions(output_path, output):
         for run in previous_runs:
             if any(person['patient_id'] != patient['patient_id'] for person in run['patients']):
                 raise ValueError('Bestand bevat een andere patiënt; wordt niet overschreven')
-    while True:
+    if clear_old is not None and not isinstance(clear_old, bool):
+        raise ValueError('clear_old moet ja/nee (boolean) zijn')
+    answer = 'ja' if clear_old else 'nee'
+    while clear_old is None:
         try:
             answer = input(f"Oude uitvoer van {patient['name']} ({patient['patient_id']}) verwijderen? (ja/nee): ").strip().lower()
         except EOFError:

@@ -5,3 +5,7 @@
 
 .DS_Store
 .ruff_cache
+# Lokale Pythonbestanden en gegenereerde patiëntuitvoer
+__pycache__/
+*.pyc
+backend/Algoritme_met_model/voorspellingen_output/

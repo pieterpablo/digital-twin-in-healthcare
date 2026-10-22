@@ -9,8 +9,7 @@
   <!-- De opmaak staat in een apart bestand -->
   <link rel="stylesheet" href="Style.css">
 
-  <!-- Chart.js is een bibliotheek waarmee een lijngrafiek kan worden getekend, internet is nodig. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
 </head>
 <body>
 
@@ -28,9 +27,10 @@
       <input id="zoekveld" type="search" placeholder="Naam" autocomplete="off">
       <ul id="patientnamen" class="zoek-opties"></ul>
     </div>
+    <button type="submit">Zoeken</button>
   </form>
   <!-- Hier komt een melding als er niets gevonden is -->
-  <p id="zoekmelding" class="zoekmelding" role="status">Vul een naam in om het behandeloverzicht te zien.</p>
+  <p id="zoekmelding" class="zoekmelding" role="status"></p>
 
   <!-- Script.js bevat de data nodig om deze regel te vullen en wordt hieronder opgeroepen -->
   <p id="patientinfo"></p>
@@ -38,30 +38,48 @@
   <!-- Alles hieronder blijft verborgen tot er een patiënt is gevonden -->
   <div id="resultaat" hidden>
 
+  <section class="controls">
+    <label>CT-scan <select id="scan-select"></select></label>
+    <button id="calculate">Bereken voorspelling</button>
+    <p id="status" role="status"></p>
+  </section>
   <!-- Deel 1: de lijngrafiek met de verwachte tumorgrootte -->
   <section>
     <h2>Verwachte tumorgrootte</h2>
     <!-- Chart.js tekent in een canvas. De div eromheen bepaalt de hoogte -->
     <div class="grafiek-box">
-      <canvas id="grafiek"></canvas>
+      <svg id="grafiek" viewBox="0 0 900 350" role="img" aria-label="CT-metingen en voorspelde SLD in millimeters"></svg>
     </div>
   </section>
 
   <!-- Deel 2: het behandelplan in volgorde (een genummerde lijst) -->
   <section>
-    <h2>Aanbevolen Behandelplan</h2>
+    <h2>Aanbevolen behandelplan</h2>
     <ol id="plan"></ol>
+    <p id="score"></p>
   </section>
 
+  <section><h2>Verloop per scan</h2><div class="table-scroll"><table id="scan-history"></table></div></section>
+  <section><h2>Andere behandelvolgordes</h2><div class="table-scroll"><table id="alternatives"></table></div></section>
   <!-- Deel 3: de patiëntgegevens waarop het plan is gebaseerd -->
   <section>
     <h2>Gebruikte patiëntgegevens</h2>
     <table id="gegevens"></table>
   </section>
 
+  <section>
+    <h2>Uitvoer opslaan</h2>
+    <label>Oude uitvoer van deze patiënt verwijderen?
+      <select id="clear-old"><option value="no">Nee, historie bewaren</option><option value="yes">Ja, oude uitvoer vervangen</option></select>
+    </label>
+    <button id="save" disabled>Resultaat opslaan</button>
+    <p id="save-status" role="status"></p>
+  </section>
   </div>
 
   <!-- Het script staat onderaan, zodat de elementen hierboven al bestaan als het draait -->
+  <script src="Graph.js"></script>
   <script src="Script.js"></script>
+  <script src="Integration.js"></script>
 </body>
 </html>
