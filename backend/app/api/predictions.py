@@ -15,7 +15,6 @@ def execute(function, *args):
         raise HTTPException(status_code=500, detail='Bestand kon niet worden gelezen of opgeslagen') from error
 
 
-@router.get('/patients')
 @router.get('/tumor/patients')
 def patients():
     return execute(service.list_patients)
@@ -24,11 +23,6 @@ def patients():
 @router.get('/tumor/predict/{patient_id}')
 def prediction(patient_id: str, scan: int | None = Query(default=None, ge=1)):
     return execute(service.prediction, patient_id, scan)
-
-
-@router.post('/predict')
-def compact_prediction(request: PredictionRequest):
-    return execute(service.compact_prediction, request.patient_id, request.scan_number)
 
 
 @router.post('/save')

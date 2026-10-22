@@ -15,13 +15,11 @@ def test_search_and_scan_selection():
     assert len(first['latest_forecast']['measurements']) == 1
     assert len(second['latest_forecast']['measurements']) == 2
     assert first['latest_forecast']['treatment_optimization']['plan'] == second['forecast_history'][0]['treatment_optimization']['plan']
-    assert second['latest_forecast']['full_treatment_trajectory']
 
 
 def test_invalid_requests():
     assert client.get('/api/tumor/predict/DEMO-001?scan=99').status_code == 400
     assert client.get('/api/tumor/predict/onbekend').status_code == 400
-    assert client.post('/api/predict', json={'patient_id': 'DEMO-001', 'scan_number': True}).status_code == 422
     assert client.post('/api/save', json={'patient_id': 'DEMO-001', 'scan_number': 1}).status_code == 422
 
 

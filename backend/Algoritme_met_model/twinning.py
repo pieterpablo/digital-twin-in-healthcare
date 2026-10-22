@@ -2,7 +2,7 @@ import numpy as np
 
 
 def biexp(t, S0, ks, kg):
-    """SLD at day t.  S0 in mm,  ks and kg in 1/day."""
+    """Stein biexponential model"""
     with np.errstate(over="ignore"):
         s = S0 * (np.exp(-ks * t) + np.exp(kg * t) - 1.0)
     return np.clip(s, 0.0, 1000.0)
@@ -15,13 +15,14 @@ def predict(scan_days, scan_sld, t_future, n_samples=20_000, seed=0):
     scan_sld  = np.asarray(scan_sld,  float)
     S0 = scan_sld[0]
 
+    """Lognormaal verdeling voor ks en kg"""
     log_ks = rng.normal(-3.0, 0.8, n_samples)
     log_kg = rng.normal(-3.2, 0.8, n_samples)
     ks = 10 ** log_ks
     kg = 10 ** log_kg
 
     model_sld = biexp(scan_days[:, None], S0, ks[None, :], kg[None, :])
-    sigma     = np.sqrt(2.0 ** 2 + (0.10 * model_sld) ** 2)         # 2 mm + 10 %
+    sigma     = np.sqrt(2.0 ** 2 + (0.10 * model_sld) ** 2)         
     loglik    = (-0.5 * ((model_sld - scan_sld[:, None]) / sigma) ** 2
                  - np.log(sigma)).sum(axis=0)
     weights   = np.exp(loglik - loglik.max())
@@ -31,7 +32,8 @@ def predict(scan_days, scan_sld, t_future, n_samples=20_000, seed=0):
     future = np.clip(future, 0, None)
     future = future + rng.normal(0, np.sqrt(2.0 ** 2 + (0.10 * future) ** 2))
 
-    draws = rng.choice(future, size=4000, p=weights)                # keep ones that fit
+    """Van 20000 samples kiezen we er 4000 met kansverdeling gewogen door de likelihood"""
+    draws = rng.choice(future, size=4000, p=weights)                
 
     return {"median":  float(np.median(draws)),
             "p10":     float(np.quantile(draws, 0.10)),
